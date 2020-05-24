@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>CAS操作 - My Docs</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "CAS\u64cd\u4f5c";
+    var mkdocs_page_input_path = "CAS\u64cd\u4f5c.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> My Docs</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">My Docs</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>CAS操作</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h3 id="cas">CAS操作</h3>
+<h5 id="cas_1">一、什么是CAS操作？</h5>
+<ul>
+<li>首先来说一下<strong><em>悲观锁</em></strong>策略</li>
+</ul>
+<p>线程在获取锁的时候，采取的是一种悲观锁的策略。即<strong><em>认为每执行一次临界区代码都会产生冲突</em></strong>，所以当前线程获取锁的时候也会阻塞其他线程获取锁。</p>
+<ul>
+<li><strong><em>CAS</em></strong>操作</li>
+</ul>
+<p>CAS操作又称无锁操作，采取的是一种<strong><em>乐观锁</em></strong>的策略，即<strong><em>它假设所有线程资源在访问共享资源时不会出现冲突</em></strong>，所以不会阻塞其他线程的操作。因此线程不会出现阻塞停顿的状态。</p>
+<p>那么如果真的出现了冲突怎么办？无锁操作是使用<strong><em>CAS(Compare And Swap)</em></strong>，即字面意思，<strong><em>比较和交换</em></strong>，以此来鉴别线程是否出现冲突，出现了冲突就重试当前操作直到没有冲突为止。</p>
+<h5 id="cas_2">二、CAS操作过程</h5>
+<ul>
+<li>首先我们可以假想有这么一个方法 CAS(V, O, N)，其三个参数分别意为：V内存地址存放的实际值，O预期的值(旧的值)，N更新的新值。</li>
+<li>当O和V相同时，即旧值和内存中实际的值相同，表明该值没有被其他线程修改过，旧值O就是目前来说最新的值了，自然就可以将新值N赋给V了。</li>
+<li>当O和V不同时，表明该值被其他线程修改过了，旧值O不是最新版本的值，所以不能将N赋给V，返回V即可。</li>
+<li>另外，当<strong><em>多个线程使用CAS操作一个变量时，只有一个线程会成功，并成功更新</em></strong>，其余则会失败。当然，失败的线程会重新尝试，也可以选择挂起。</li>
+</ul>
+<p><strong><em>TIPS</em></strong>：CAS操作的实现需要硬件指令集的支持，在JDK1.5以后的虚拟机才可以实现。而且CAS并不会将线程就那么简单的挂起，CAS失败以后会进行一定的尝试，而非进行进行耗时的挂起或者唤醒操作，也称为非阻塞同步。</p>
+<h5 id="cas_3">三、CAS的问题</h5>
+<ol>
+<li>用一个例子来讲，就是一个是<strong><em>从A变成B，又从B变成A</em></strong>，CAS检查时发现旧值依然与新值相等，但是实际上发生了变化。这里我们的解决方案就是类似版本管理工具之类的作法，添加一个版本号。</li>
+<li><strong><em>自旋会浪费处理器资源</em></strong>，(自旋: 如同前面说的CAS失败不会立即挂起，而是继续争夺一段时间，而后才放弃)，这里我们采取的策略是，如果在一定时间内获取到了资源，那么下次延长这个时间，如果没有获取到，那么下次减短这个时间。</li>
+<li><strong><em>不公平</em></strong>，处于阻塞状态的线程无法获取刚释放的资源，而处于自旋状态的线程很有可能会优先获得这把锁。</li>
+</ol>
+<p><strong><em>TIPS</em></strong>: 内建锁无法实现公平机制，而Lock体系可以实现公平锁。</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
