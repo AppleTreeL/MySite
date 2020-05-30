@@ -5,26 +5,26 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="None">
   
   
-  <link rel="shortcut icon" href="img/favicon.ico">
-  <title>My Docs</title>
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Java对象头 - My Docs</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-  <link rel="stylesheet" href="css/theme.css" />
-  <link rel="stylesheet" href="css/theme_extra.css" />
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Home";
-    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_name = "Java\u5bf9\u8c61\u5934";
+    var mkdocs_page_input_path = "Java\u5bf9\u8c61\u5934.md";
     var mkdocs_page_url = null;
   </script>
   
-  <script src="js/jquery-2.1.1.min.js" defer></script>
-  <script src="js/modernizr-2.8.3.min.js" defer></script>
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
@@ -38,27 +38,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href="." class="icon icon-home"> My Docs</a>
+        <a href=".." class="icon icon-home"> My Docs</a>
         <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#commands">Commands</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#project-layout">Project layout</a>
-    </li>
-    </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="CAS%E6%93%8D%E4%BD%9C/">CAS操作</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../CAS%E6%93%8D%E4%BD%9C/">CAS操作</a>
                     </li>
                 </ul>
       </div>
@@ -70,7 +64,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href=".">My Docs</a>
+        <a href="..">My Docs</a>
       </nav>
 
       
@@ -78,11 +72,11 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".">Docs</a> &raquo;</li>
+    <li><a href="..">Docs</a> &raquo;</li>
     
       
     
-    <li>Home</li>
+    <li>Java对象头</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -93,32 +87,50 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="welcome-to-mkdocs">Welcome to MkDocs</h1>
-<p>For full documentation visit <a href="https://www.mkdocs.org">mkdocs.org</a>.</p>
-<h2 id="commands">Commands</h2>
+                <h4 id="java">Java对象头</h4>
+<h5 id="1">1、存储结构</h5>
 <ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
-<li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
-<li><code>mkdocs build</code> - Build the documentation site.</li>
-<li><code>mkdocs -h</code> - Print help message and exit.</li>
+<li>32位的JVM Mark Word的存储结构为：</li>
 </ul>
-<h2 id="project-layout">Project layout</h2>
-<pre><code>mkdocs.yml    # The configuration file.
-docs/
-    index.md  # The documentation homepage.
-    ...       # Other markdown pages, images and other files.
-</code></pre>
+<table>
+<thead>
+<tr>
+<th>锁状态</th>
+<th>25bit</th>
+<th>4bit</th>
+<th>1bit是否是偏向锁</th>
+<th>2bit标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无锁状态</td>
+<td>对象的HashCode</td>
+<td>对象的分代年龄</td>
+<td>0</td>
+<td>01</td>
+</tr>
+</tbody>
+</table>
+<p>在同步的时候获取对象的monnitor，即获取到对象的的锁。锁，无非就是一个对对象的标志，这个标志存放在Java对象的对象头。如上表格所示，Mark Word会默认存放HashCode、年龄值、以及锁标志位。</p>
+<h5 id="2">2、锁的状态</h5>
+<ul>
+<li>JavaSE1.6中，锁一共有四种状态，级别从低到高依次是：</li>
+<li>无锁状态</li>
+<li>偏向锁状态</li>
+<li>轻量级锁状态</li>
+<li>重量级锁状态</li>
+<li>
+<p>这几个状态会随着竞争情况逐渐升级，<strong><em>锁可以升级，但是不能够降级</em></strong>，这种能升级但不能降级的策略主要是为了<strong><em>提高获得锁和释放锁的效率</em></strong>。</p>
+</li>
+<li>
+<p>MarkWord变化图</p>
+</li>
+</ul>
               
             </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="CAS%E6%93%8D%E4%BD%9C/" class="btn btn-neutral float-right" title="CAS操作">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-    </div>
   
 
   <hr/>
@@ -143,13 +155,11 @@ docs/
       
       
       
-        <span style="margin-left: 15px"><a href="CAS%E6%93%8D%E4%BD%9C/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
     </span>
 </div>
-    <script>var base_url = '.';</script>
-    <script src="js/theme.js" defer></script>
-      <script src="search/main.js" defer></script>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);
@@ -158,8 +168,3 @@ docs/
 
 </body>
 </html>
-
-<!--
-MkDocs version : 1.1.2
-Build Date UTC : 2020-05-30 06:04:24.958208+00:00
--->
