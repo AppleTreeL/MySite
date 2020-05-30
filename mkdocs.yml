@@ -2,4 +2,14 @@ site_name: My Docs
 nav:
     - Home: index.md
     - CAS操作: CAS操作.md
+    - ArrayList和Vector的区别: ArrayList和Vector的区别.md
+    - HashTable核HashMap的区别: HashTable核HashMap的区别.md
+    - Java对象头: Java对象头.md
+    - 操作系统之线程: 操作系统之线程.md
+    - 观察者模式: 观察者模式.md
+    - 基本调度: 基本调度.md
+    - 简易博客: 简易博客.md
+    - 类型强制转换: 类型强制转换.md
+    - 浅谈代理设计模式: 浅谈代理设计模式.md
+    - 图: 图.md
 theme: readthedocs
